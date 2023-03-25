@@ -1,0 +1,39 @@
+<link rel="stylesheet" href="{{ 'search-form.css' | asset_url }}" type="text/css">
+
+<div class="search-form">
+    <form class="search-bar__form" action="{{ routes.search_url }}" method="get" role="search">
+      <div class="search-form__input-wrapper">
+        <input
+          type="text"
+          name="q"
+          placeholder="type here"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-owns="predictive-search-results"
+          aria-expanded="false"
+          aria-label="{{ 'general.search.placeholder' | t }}"
+          aria-haspopup="listbox"
+          class="search-form__input search-bar__input"
+          data-predictive-search-drawer-input
+        />
+        <input type="hidden" name="options[prefix]" value="last" aria-hidden="true" />
+        <div class="predictive-search-wrapper predictive-search-wrapper--drawer" data-predictive-search-mount="drawer"></div>
+        <span class="search-close">{% include 'icon-remove' %}</span>
+      </div>
+
+      <button class="search-bar__submit search-form__submit"
+        type="submit"
+        data-search-form-submit>
+        {% include 'icon-search' %}
+        <span class="icon__fallback-text">{{ 'general.search.submit' | t }}</span>
+      </button>
+
+      {% comment %} <div class="search-bar__actions">
+        <button type="button" class="btn--link search-bar__search">
+          {% include 'icon-chevron-right' %}
+        </button>
+      </div> {% endcomment %}
+      
+    </form>
+
+</div>

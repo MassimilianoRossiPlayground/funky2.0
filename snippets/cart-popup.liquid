@@ -1,0 +1,81 @@
+<link rel="stylesheet" href="{{ 'cart-popup.css' | asset_url }}" type="text/css">
+
+<div class="cart-popup" data-cart-popup-wrapper>
+  <form action="{{ routes.cart_url }}" method="post" novalidate class="cart">
+    <div class="cart-popup__products">
+      {% if cart.items.size == 0 %}
+        <span class="msg-empty-cart medium"> IL TUO CARRELLO <br/>È VUOTO :(</span>
+      {% endif %}
+      {% for item in cart.items %}
+        {% assign itemHandleArray = item.url | split: "/"  %}
+        {% assign itemHandlePart = itemHandleArray[2]  %}
+        {% assign itemHandle = itemHandlePart | split: "?"  %}
+        {% assign productHandle = itemHandle[0]  %}
+        {% assign maxItems = "" %}
+        {% for itemVariant in all_products[productHandle].variants %}
+          {% if itemVariant.id == item.id %}
+            {% assign maxItems = itemVariant.inventory_quantity %}
+          {% endif %}
+        {% endfor %}
+          <div class="cart-item-single" attr="{{productHandle}}">
+            <div class="cart-item-single__image">
+              <img class="cart-image{% if item.image == null %} hide{% endif %}" src="{{ item | img_url: 'x190' }}" alt="{{ item.image.alt | escape }}"> 
+            </div>
+            <div class="cart-item-single__content">
+              <div class="cart-item-title">
+                <span class="cart-item-title__text">{{ item.product.title }}</span>
+                <div class="cart-item-close">
+                  <a href="/cart/change?line={{ forloop.index }}&amp;quantity=0" class="cart-item-title__remove" aria-label="{{ 'cart.label.remove' | t: product: item.title }}" data-cart-remove>{% include 'icon-remove' %}</a>
+                </div>
+              </div>
+              <div class="cart-item-info">
+                <div class="cart-item-info__option" data-ful="{{maxItems}}">
+                  <div class="cart-item-info__option__name">
+                    {%- for option in item.options_with_values -%}
+                      <span>{{ option.value }}</span>
+                    {%- endfor -%}
+                  </div>
+                  <div class="cart-item-info__option__price">
+                    {{ item.original_price | money }}
+                  </div>
+                </div>
+                <div class="cart-item-info__quantity">
+                  <div class="cart-item-info__quantity__action">
+                    <div class="cart-action-oneless">
+                    -
+                    </div>
+                    <div class="cart-action-quantity">
+                    {{ item.quantity }}
+                    </div>
+                    <div class="cart-action-onemore">
+                    +
+                    </div>
+                  </div>
+                  <div class="cart__qty">
+                    <label for="updates_large_{{ item.key }}" class="cart__qty-label" data-quantity-label-desktop>{{ 'cart.label.quantity' | t }}</label>
+                    <input id="updates_large_{{ item.key }}" class="cart__qty-input" type="number"
+                      name="updates[]" value="{{ item.quantity }}" min="0" pattern="[0-9]*"
+                      data-quantity-input data-quantity-item="{{ forloop.index }}" data-quantity-input-desktop>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      {% endfor %}
+    </div>
+    
+    {% if cart.items.size > 0 %}
+    <div class="cart-popup__checkout">
+      <div class="cart-popup-subtotal">
+        <span class="cart-popup-subtotal__title">TOTAL</span>
+        <span class="cart-popup-subtotal__price" data-cart-subtotal>{{ cart.total_price | money_with_currency }}</span>
+      </div>
+      <div class="cart__submit-controls">
+        <input type="submit" name="checkout" class="cart-submit" value="CHECK OUT">
+        <span>Spedizione gratuita in tutta Europa per ordini superiori a 50€. Ordini spediti entro 24h!</span>
+      </div>
+    </div>
+    {% endif %}
+
+  </form>
+</div>
